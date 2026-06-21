@@ -1,4 +1,8 @@
 import argparse
+import csv
+import json
+import os
+from datetime import datetime
 
 import torch
 import yaml
@@ -28,6 +32,8 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--checkpoint", required=True)
     parser.add_argument("--config",     default="configs/base.yaml")
+    parser.add_argument("--run_name",   default=None,
+                        help="Override run name (default: inferred from checkpoint path)")
     return parser.parse_args()
 
 
@@ -62,34 +68,100 @@ def evaluate(model, loader, device, num_classes):
     return per_class_iou, miou
 
 
+def save_test_metrics(run_dir: str, run_name: str, config: dict,
+                      per_class_iou: list, miou: float, best_val_miou: float):
+    safe_iou = [v if v is not None else 0.0 for v in per_class_iou]
+
+    metrics = {
+        "run_name":    run_name,
+        "test_miou":   round(miou, 6),
+        "best_val_miou": round(best_val_miou, 6),
+        "per_class_iou": {
+            "impervious":     round(safe_iou[0], 6),
+            "building":       round(safe_iou[1], 6),
+            "low_vegetation": round(safe_iou[2], 6),
+            "tree":           round(safe_iou[3], 6),
+            "car":            round(safe_iou[4], 6),
+            "clutter":        round(safe_iou[5], 6),
+        },
+        "points_per_class": config["points_per_class"],
+        "focal_gamma":      config["focal_gamma"],
+        "epochs_trained":   config["epochs"],
+        "batch_size":       config["batch_size"],
+        "timestamp":        datetime.utcnow().isoformat(),
+    }
+    with open(os.path.join(run_dir, "test_metrics.json"), "w") as f:
+        json.dump(metrics, f, indent=2)
+
+    summary_path = os.path.join(config["results_dir"], "summary.csv")
+    fieldnames = [
+        "run_name", "points_per_class", "focal_gamma",
+        "best_val_miou", "test_miou",
+        "iou_impervious", "iou_building", "iou_low_vegetation",
+        "iou_tree", "iou_car", "iou_clutter",
+        "epochs_trained", "batch_size", "timestamp",
+    ]
+    row = {
+        "run_name":           run_name,
+        "points_per_class":   config["points_per_class"],
+        "focal_gamma":        config["focal_gamma"],
+        "best_val_miou":      round(best_val_miou, 6),
+        "test_miou":          round(miou, 6),
+        "iou_impervious":     round(safe_iou[0], 6),
+        "iou_building":       round(safe_iou[1], 6),
+        "iou_low_vegetation": round(safe_iou[2], 6),
+        "iou_tree":           round(safe_iou[3], 6),
+        "iou_car":            round(safe_iou[4], 6),
+        "iou_clutter":        round(safe_iou[5], 6),
+        "epochs_trained":     config["epochs"],
+        "batch_size":         config["batch_size"],
+        "timestamp":          datetime.utcnow().isoformat(),
+    }
+    existing = []
+    if os.path.exists(summary_path):
+        with open(summary_path, "r") as f:
+            existing = list(csv.DictReader(f))
+    existing = [r for r in existing if r["run_name"] != run_name]
+    existing.append(row)
+    with open(summary_path, "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(existing)
+
+
 def main():
     args = parse_args()
-    cfg  = load_config(args.config)
-
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     ckpt = torch.load(args.checkpoint, map_location=device)
-    saved_cfg = ckpt.get("cfg", cfg)
+    cfg  = ckpt.get("config", load_config(args.config))
 
-    model = build_model(saved_cfg["num_classes"], saved_cfg["backbone"], pretrained=False).to(device)
-    model.load_state_dict(ckpt["model_state"])
+    # Infer run_name and run_dir from checkpoint path if not provided
+    run_name = args.run_name or os.path.basename(os.path.dirname(args.checkpoint))
+    run_dir  = os.path.dirname(args.checkpoint)
 
-    test_ds = PotsdamPointDataset(saved_cfg["data_root"], "test",
-                                  points_per_class=saved_cfg["points_per_class"], augment=False)
-    test_loader = DataLoader(test_ds, batch_size=saved_cfg["batch_size"],
-                             shuffle=False, num_workers=saved_cfg["num_workers"], pin_memory=True)
+    model = build_model(cfg["num_classes"], cfg["backbone"], pretrained=False).to(device)
+    model.load_state_dict(ckpt["model_state_dict"])
 
-    per_class_iou, miou = evaluate(model, test_loader, device, saved_cfg["num_classes"])
+    test_ds = PotsdamPointDataset(cfg["data_root"], "test",
+                                  points_per_class=cfg["points_per_class"], augment=False)
+    test_loader = DataLoader(test_ds, batch_size=cfg["batch_size"],
+                             shuffle=False, num_workers=cfg["num_workers"], pin_memory=True)
 
-    print(f"\nTest results (checkpoint: {args.checkpoint})")
+    per_class_iou, miou = evaluate(model, test_loader, device, cfg["num_classes"])
+    best_val_miou = ckpt.get("val_miou", 0.0)
+
+    print(f"\nTest results  (run: {run_name})")
     print("-" * 40)
     for cls, iou in enumerate(per_class_iou):
-        if iou is None:
-            print(f"  {CLASS_NAMES[cls]:<24} N/A")
-        else:
-            print(f"  {CLASS_NAMES[cls]:<24} {iou:.4f}")
+        tag = f"{iou:.4f}" if iou is not None else "N/A"
+        print(f"  {CLASS_NAMES[cls]:<24} {tag}")
     print("-" * 40)
     print(f"  {'mIoU':<24} {miou:.4f}")
+
+    save_test_metrics(run_dir, run_name, cfg, per_class_iou, miou, best_val_miou)
+    print(f"\nSaved test_metrics.json → {run_dir}")
+    print(f"Upserted row  → {cfg['results_dir']}/summary.csv")
 
 
 if __name__ == "__main__":

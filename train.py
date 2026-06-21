@@ -28,6 +28,24 @@ def parse_args():
     return parser.parse_args()
 
 
+def setup_run_dir(run_name: str, config: dict) -> str:
+    run_dir = os.path.join(config["results_dir"], "runs", run_name)
+    os.makedirs(run_dir, exist_ok=True)
+    with open(os.path.join(run_dir, "config.yaml"), "w") as f:
+        yaml.dump(config, f, default_flow_style=False)
+    return run_dir
+
+
+def append_history(run_dir: str, epoch: int, train_loss: float, val_miou: float):
+    path = os.path.join(run_dir, "history.csv")
+    write_header = not os.path.exists(path)
+    with open(path, "a", newline="") as f:
+        writer = csv.writer(f)
+        if write_header:
+            writer.writerow(["epoch", "train_loss", "val_miou"])
+        writer.writerow([epoch, round(train_loss, 6), round(val_miou, 6)])
+
+
 def train_one_epoch(model, loader, criterion, optimizer, device):
     model.train()
     meter = AverageMeter()
@@ -76,11 +94,12 @@ def main():
     if args.epochs is not None:
         cfg["epochs"] = args.epochs
 
-    os.makedirs(cfg["checkpoint_dir"], exist_ok=True)
-    os.makedirs(cfg["results_dir"],    exist_ok=True)
+    os.makedirs(cfg["results_dir"], exist_ok=True)
+    run_dir = setup_run_dir(args.run_name, cfg)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
+    print(f"Run directory: {run_dir}")
 
     train_ds = PotsdamPointDataset(cfg["data_root"], "train",
                                    points_per_class=cfg["points_per_class"], augment=True)
@@ -97,8 +116,7 @@ def main():
     optimizer = torch.optim.Adam(model.parameters(), lr=cfg["lr"], weight_decay=cfg["weight_decay"])
 
     best_miou = 0.0
-    history   = []
-    ckpt_path = os.path.join(cfg["checkpoint_dir"], f"{args.run_name}_best.pth")
+    ckpt_path = os.path.join(run_dir, "best.pth")
 
     for epoch in range(1, cfg["epochs"] + 1):
         print(f"Epoch {epoch}/{cfg['epochs']}")
@@ -106,20 +124,21 @@ def main():
         val_miou   = validate(model, val_loader, device, cfg["num_classes"])
 
         print(f"  train_loss={train_loss:.4f}  val_mIoU={val_miou:.4f}")
-        history.append({"epoch": epoch, "train_loss": train_loss, "val_miou": val_miou})
+        append_history(run_dir, epoch, train_loss, val_miou)
 
         if val_miou > best_miou:
             best_miou = val_miou
-            torch.save({"epoch": epoch, "model_state": model.state_dict(),
-                        "val_miou": val_miou, "cfg": cfg}, ckpt_path)
+            torch.save({
+                "epoch": epoch,
+                "model_state_dict": model.state_dict(),
+                "optimizer_state_dict": optimizer.state_dict(),
+                "val_miou": val_miou,
+                "config": cfg,
+            }, ckpt_path)
             print(f"  -> saved best checkpoint (mIoU={best_miou:.4f})")
 
-    csv_path = os.path.join(cfg["results_dir"], f"{args.run_name}_history.csv")
-    with open(csv_path, "w", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=["epoch", "train_loss", "val_miou"])
-        writer.writeheader()
-        writer.writerows(history)
-    print(f"History saved to {csv_path}")
+    print(f"Training complete. Best val mIoU: {best_miou:.4f}")
+    print(f"Artifacts in: {run_dir}")
 
 
 if __name__ == "__main__":
