@@ -1,0 +1,18 @@
+{
+  "run_name": "baseline_p10_g2",
+  "test_miou": 0.574467,
+  "best_val_miou": 0.573272,
+  "per_class_iou": {
+    "impervious": 0.774559,
+    "building": 0.798864,
+    "low_vegetation": 0.576384,
+    "tree": 0.542511,
+    "car": 0.650058,
+    "clutter": 0.104425
+  },
+  "points_per_class": 10,
+  "focal_gamma": 2.0,
+  "epochs_trained": 50,
+  "batch_size": 64,
+  "timestamp": "2026-06-21T20:21:49.362448"
+}
