@@ -1,0 +1,126 @@
+import argparse
+import csv
+import os
+
+import torch
+import yaml
+from torch.utils.data import DataLoader
+from tqdm import tqdm
+
+from data.potsdam_dataset import PotsdamPointDataset
+from losses.partial_ce import PartialFocalCELoss
+from models.segmentation_model import build_model
+from utils.metrics import AverageMeter, compute_miou
+
+
+def load_config(path: str) -> dict:
+    with open(path) as f:
+        return yaml.safe_load(f)
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config",           default="configs/base.yaml")
+    parser.add_argument("--points_per_class", type=int,   default=None)
+    parser.add_argument("--focal_gamma",      type=float, default=None)
+    parser.add_argument("--run_name",         type=str,   default="run")
+    parser.add_argument("--epochs",           type=int,   default=None)
+    return parser.parse_args()
+
+
+def train_one_epoch(model, loader, criterion, optimizer, device):
+    model.train()
+    meter = AverageMeter()
+    for batch in tqdm(loader, desc="  train", leave=False):
+        images     = batch["image"].to(device)
+        labels     = batch["label"].to(device)
+        point_mask = batch["point_mask"].to(device)
+
+        optimizer.zero_grad()
+        logits = model(images)
+        loss   = criterion(logits, labels, point_mask)
+        loss.backward()
+        optimizer.step()
+
+        meter.update(loss.item(), images.size(0))
+    return meter.avg
+
+
+@torch.no_grad()
+def validate(model, loader, device, num_classes):
+    model.eval()
+    all_preds, all_targets = [], []
+    for batch in tqdm(loader, desc="  val  ", leave=False):
+        images  = batch["image"].to(device)
+        targets = batch["label"].to(device)
+
+        logits = model(images)
+        preds  = logits.argmax(dim=1)
+        all_preds.append(preds.cpu())
+        all_targets.append(targets.cpu())
+
+    preds_cat   = torch.cat(all_preds,   dim=0)
+    targets_cat = torch.cat(all_targets, dim=0)
+    return compute_miou(preds_cat, targets_cat, num_classes)
+
+
+def main():
+    args = parse_args()
+    cfg  = load_config(args.config)
+
+    # CLI overrides
+    if args.points_per_class is not None:
+        cfg["points_per_class"] = args.points_per_class
+    if args.focal_gamma is not None:
+        cfg["focal_gamma"] = args.focal_gamma
+    if args.epochs is not None:
+        cfg["epochs"] = args.epochs
+
+    os.makedirs(cfg["checkpoint_dir"], exist_ok=True)
+    os.makedirs(cfg["results_dir"],    exist_ok=True)
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(f"Using device: {device}")
+
+    train_ds = PotsdamPointDataset(cfg["data_root"], "train",
+                                   points_per_class=cfg["points_per_class"], augment=True)
+    val_ds   = PotsdamPointDataset(cfg["data_root"], "val",
+                                   points_per_class=cfg["points_per_class"], augment=False)
+
+    train_loader = DataLoader(train_ds, batch_size=cfg["batch_size"],
+                              shuffle=True,  num_workers=cfg["num_workers"], pin_memory=True)
+    val_loader   = DataLoader(val_ds,   batch_size=cfg["batch_size"],
+                              shuffle=False, num_workers=cfg["num_workers"], pin_memory=True)
+
+    model = build_model(cfg["num_classes"], cfg["backbone"], cfg["pretrained"]).to(device)
+    criterion = PartialFocalCELoss(gamma=cfg["focal_gamma"], num_classes=cfg["num_classes"])
+    optimizer = torch.optim.Adam(model.parameters(), lr=cfg["lr"], weight_decay=cfg["weight_decay"])
+
+    best_miou = 0.0
+    history   = []
+    ckpt_path = os.path.join(cfg["checkpoint_dir"], f"{args.run_name}_best.pth")
+
+    for epoch in range(1, cfg["epochs"] + 1):
+        print(f"Epoch {epoch}/{cfg['epochs']}")
+        train_loss = train_one_epoch(model, train_loader, criterion, optimizer, device)
+        val_miou   = validate(model, val_loader, device, cfg["num_classes"])
+
+        print(f"  train_loss={train_loss:.4f}  val_mIoU={val_miou:.4f}")
+        history.append({"epoch": epoch, "train_loss": train_loss, "val_miou": val_miou})
+
+        if val_miou > best_miou:
+            best_miou = val_miou
+            torch.save({"epoch": epoch, "model_state": model.state_dict(),
+                        "val_miou": val_miou, "cfg": cfg}, ckpt_path)
+            print(f"  -> saved best checkpoint (mIoU={best_miou:.4f})")
+
+    csv_path = os.path.join(cfg["results_dir"], f"{args.run_name}_history.csv")
+    with open(csv_path, "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=["epoch", "train_loss", "val_miou"])
+        writer.writeheader()
+        writer.writerows(history)
+    print(f"History saved to {csv_path}")
+
+
+if __name__ == "__main__":
+    main()
