@@ -2,3 +2,4 @@ checkpoints/
 configs/
 __pycache__/
 *.pyc
+*.pth
