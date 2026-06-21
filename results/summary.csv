@@ -1,0 +1,2 @@
+run_name,points_per_class,focal_gamma,best_val_miou,test_miou,iou_impervious,iou_building,iou_low_vegetation,iou_tree,iou_car,iou_clutter,epochs_trained,batch_size,timestamp
+baseline_p10_g2,10,2.0,0.573272,0.574467,0.774559,0.798864,0.576384,0.542511,0.650058,0.104425,50,64,2026-06-21T20:21:49.362768
