@@ -1,0 +1,18 @@
+{
+  "run_name": "exp1_p1_g2",
+  "test_miou": 0.542182,
+  "best_val_miou": 0.539952,
+  "per_class_iou": {
+    "impervious": 0.730971,
+    "building": 0.73721,
+    "low_vegetation": 0.530494,
+    "tree": 0.553442,
+    "car": 0.615424,
+    "clutter": 0.085551
+  },
+  "points_per_class": 1,
+  "focal_gamma": 2.0,
+  "epochs_trained": 50,
+  "batch_size": 64,
+  "timestamp": "2026-06-22T00:01:41.846873"
+}
