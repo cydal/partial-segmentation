@@ -1,0 +1,28 @@
+data_root: "/home/ubuntu/weak-supervision/patches"
+num_classes: 6
+image_size: 300
+batch_size: 64
+num_workers: 8
+
+# Model
+backbone: "resnet50"
+pretrained: true
+
+# Loss
+focal_gamma: 2.0               
+
+# Point simulation
+points_per_class: 10
+use_slic: false
+slic_n_segments: 200
+sampling: uniform
+
+# Training
+epochs: 50
+lr: 0.0001
+weight_decay: 0.0001
+optimizer: "adam"
+
+# Paths
+checkpoint_dir: "./checkpoints"
+results_dir: "./results"
