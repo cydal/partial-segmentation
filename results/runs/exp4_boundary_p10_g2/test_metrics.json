@@ -1,0 +1,18 @@
+{
+  "run_name": "exp4_boundary_p10_g2",
+  "test_miou": 0.579166,
+  "best_val_miou": 0.558767,
+  "per_class_iou": {
+    "impervious": 0.772938,
+    "building": 0.78003,
+    "low_vegetation": 0.575667,
+    "tree": 0.543847,
+    "car": 0.661964,
+    "clutter": 0.140547
+  },
+  "points_per_class": 10,
+  "focal_gamma": 2.0,
+  "epochs_trained": 50,
+  "batch_size": 64,
+  "timestamp": "2026-06-22T22:47:16.410196"
+}

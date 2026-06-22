@@ -1,0 +1,18 @@
+{
+  "run_name": "exp4_interior_p10_g2",
+  "test_miou": 0.563644,
+  "best_val_miou": 0.561229,
+  "per_class_iou": {
+    "impervious": 0.766298,
+    "building": 0.761481,
+    "low_vegetation": 0.56062,
+    "tree": 0.561333,
+    "car": 0.612776,
+    "clutter": 0.119354
+  },
+  "points_per_class": 10,
+  "focal_gamma": 2.0,
+  "epochs_trained": 50,
+  "batch_size": 64,
+  "timestamp": "2026-06-22T23:06:46.065885"
+}
