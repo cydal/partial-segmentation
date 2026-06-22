@@ -25,6 +25,10 @@ def parse_args():
     parser.add_argument("--focal_gamma",      type=float, default=None)
     parser.add_argument("--run_name",         type=str,   default="run")
     parser.add_argument("--epochs",           type=int,   default=None)
+    parser.add_argument("--use_slic",         action="store_true", default=None)
+    parser.add_argument("--slic_n_segments",  type=int,   default=None)
+    parser.add_argument("--sampling",         type=str,   default=None,
+                        choices=["uniform", "boundary", "interior"])
     return parser.parse_args()
 
 
@@ -93,6 +97,12 @@ def main():
         cfg["focal_gamma"] = args.focal_gamma
     if args.epochs is not None:
         cfg["epochs"] = args.epochs
+    if args.use_slic:
+        cfg["use_slic"] = True
+    if args.slic_n_segments is not None:
+        cfg["slic_n_segments"] = args.slic_n_segments
+    if args.sampling is not None:
+        cfg["sampling"] = args.sampling
 
     os.makedirs(cfg["results_dir"], exist_ok=True)
     run_dir = setup_run_dir(args.run_name, cfg)
@@ -101,10 +111,17 @@ def main():
     print(f"Using device: {device}")
     print(f"Run directory: {run_dir}")
 
+    ds_kwargs = dict(
+        use_slic=cfg.get("use_slic", False),
+        slic_n_segments=cfg.get("slic_n_segments", 200),
+        sampling=cfg.get("sampling", "uniform"),
+    )
     train_ds = PotsdamPointDataset(cfg["data_root"], "train",
-                                   points_per_class=cfg["points_per_class"], augment=True)
+                                   points_per_class=cfg["points_per_class"],
+                                   augment=True, **ds_kwargs)
     val_ds   = PotsdamPointDataset(cfg["data_root"], "val",
-                                   points_per_class=cfg["points_per_class"], augment=False)
+                                   points_per_class=cfg["points_per_class"],
+                                   augment=False, **ds_kwargs)
 
     train_loader = DataLoader(train_ds, batch_size=cfg["batch_size"],
                               shuffle=True,  num_workers=cfg["num_workers"], pin_memory=True)

@@ -368,6 +368,104 @@ def fig_point_illustration():
     print(f"Saved {out}")
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Fig 7 — Experiment 3: SLIC vs. point-only comparison
+# ─────────────────────────────────────────────────────────────────────────────
+def fig_exp3_slic_comparison():
+    """Requires exp1_p10_g2 and exp3_slic_p10_g2 to be complete."""
+    import json
+
+    runs = [
+        ("exp1_p10_g2",      "Point-only  (p=10, γ=2)",  "#2a7ae0"),
+        ("exp3_slic_p10_g2", "SLIC-expanded (p=10, γ=2)", "#e05c2a"),
+    ]
+
+    # ── load histories ────────────────────────────────────────────────────────
+    histories = {}
+    for run_name, _, _ in runs:
+        epochs, losses, mious = load_history(run_name)
+        histories[run_name] = (epochs, losses, mious)
+
+    # ── load test metrics ─────────────────────────────────────────────────────
+    test_metrics = {}
+    for run_name, _, _ in runs:
+        path = os.path.join(RESULTS_DIR, "runs", run_name, "test_metrics.json")
+        with open(path) as f:
+            test_metrics[run_name] = json.load(f)
+
+    fig = plt.figure(figsize=(16, 5))
+    gs  = fig.add_gridspec(1, 3, wspace=0.35)
+
+    # ── panel 1: val mIoU curves ──────────────────────────────────────────────
+    ax1 = fig.add_subplot(gs[0])
+    for run_name, label, color in runs:
+        epochs, _, mious = histories[run_name]
+        ax1.plot(epochs, mious, linewidth=1.8, color=color, label=label)
+        best = max(mious)
+        best_ep = epochs[mious.index(best)]
+        ax1.scatter([best_ep], [best], color=color, s=50, zorder=5)
+        ax1.annotate(f"{best:.3f}", (best_ep, best),
+                     textcoords="offset points", xytext=(4, 4),
+                     fontsize=8, color=color)
+    ax1.set_xlabel("Epoch")
+    ax1.set_ylabel("Val mIoU")
+    ax1.set_title("Validation mIoU during training")
+    ax1.legend(fontsize=8)
+    ax1.grid(alpha=0.3)
+
+    # ── panel 2: train loss curves ────────────────────────────────────────────
+    ax2 = fig.add_subplot(gs[1])
+    for run_name, label, color in runs:
+        epochs, losses, _ = histories[run_name]
+        ax2.plot(epochs, losses, linewidth=1.8, color=color, label=label)
+    ax2.set_xlabel("Epoch")
+    ax2.set_ylabel("Train loss")
+    ax2.set_title("Training loss")
+    ax2.legend(fontsize=8)
+    ax2.grid(alpha=0.3)
+
+    # ── panel 3: per-class test IoU bar chart ─────────────────────────────────
+    ax3 = fig.add_subplot(gs[2])
+    cls_keys = ["impervious", "building", "low_vegetation", "tree", "car", "clutter"]
+    cls_labels = ["Imperv.", "Building", "Low veg.", "Tree", "Car", "Clutter"]
+    x = np.arange(len(cls_keys))
+    width = 0.35
+
+    for i, (run_name, label, color) in enumerate(runs):
+        pci = test_metrics[run_name]["per_class_iou"]
+        vals = [pci[k] for k in cls_keys]
+        bars = ax3.bar(x + (i - 0.5) * width, vals, width,
+                       label=label, color=color, alpha=0.85)
+        for bar, v in zip(bars, vals):
+            ax3.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.008,
+                     f"{v:.2f}", ha="center", va="bottom", fontsize=6.5)
+
+    # mIoU annotations
+    for i, (run_name, _, color) in enumerate(runs):
+        miou = test_metrics[run_name]["test_miou"]
+        ax3.annotate(f"mIoU={miou:.3f}", xy=(0.02 + i * 0.5, 0.97),
+                     xycoords="axes fraction", fontsize=8, color=color,
+                     va="top", fontweight="bold")
+
+    ax3.set_xticks(x)
+    ax3.set_xticklabels(cls_labels, rotation=20, ha="right", fontsize=8)
+    ax3.set_ylabel("IoU")
+    ax3.set_ylim(0, 1.0)
+    ax3.set_title("Test IoU per class")
+    ax3.legend(fontsize=8)
+    ax3.grid(axis="y", alpha=0.3)
+
+    fig.suptitle(
+        "Experiment 3 — SLIC label propagation vs. point-only supervision  "
+        "(p=10, γ=2.0, 50 epochs)",
+        fontsize=12,
+    )
+    out = os.path.join(FIG_DIR, "fig7_exp3_slic_comparison.png")
+    fig.savefig(out, dpi=150, bbox_inches="tight")
+    plt.close(fig)
+    print(f"Saved {out}")
+
+
 if __name__ == "__main__":
     print("Generating figures...")
     fig_baseline_curve()
@@ -376,4 +474,12 @@ if __name__ == "__main__":
     fig_heatmap()
     fig_qualitative()
     fig_point_illustration()
+
+    # Experiment 3 figure — only generated if the SLIC run is complete
+    slic_metrics = os.path.join(RESULTS_DIR, "runs", "exp3_slic_p10_g2", "test_metrics.json")
+    if os.path.exists(slic_metrics):
+        fig_exp3_slic_comparison()
+    else:
+        print("Skipping fig7 — exp3_slic_p10_g2 not yet complete")
+
     print("Done. All figures in", FIG_DIR)
