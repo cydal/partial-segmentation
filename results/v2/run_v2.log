@@ -1,0 +1,429 @@
+[skip] ref_s0 (already done)
+[skip] ref_s1 (already done)
+[skip] ref_s2 (already done)
+[skip] p1_g2_s0 (already done)
+[skip] p5_g2_s0 (already done)
+[skip] p20_g2_s0 (already done)
+[skip] p50_g2_s0 (already done)
+[skip] g0_s0 (already done)
+[skip] g05_s0 (already done)
+[skip] g1_s0 (already done)
+=== [train] slic_s0 :: --points_per_class 10 --focal_gamma 2.0 --sampling uniform --seed 0 --point_seed 0 --use_slic ===
+Using device: cuda
+Run directory: ./results/v2/runs/slic_s0
+seed=0  point_seed=0  fixed_points=True  sampling=uniform  use_slic=True
+Epoch 1/50
+  train_loss=0.7927  val_mIoU=0.3096
+  -> saved best checkpoint (mIoU=0.3096)
+Epoch 2/50
+  train_loss=0.4312  val_mIoU=0.4745
+  -> saved best checkpoint (mIoU=0.4745)
+Epoch 3/50
+  train_loss=0.3365  val_mIoU=0.5309
+  -> saved best checkpoint (mIoU=0.5309)
+Epoch 4/50
+  train_loss=0.2838  val_mIoU=0.5395
+  -> saved best checkpoint (mIoU=0.5395)
+Epoch 5/50
+  train_loss=0.2550  val_mIoU=0.5277
+Epoch 6/50
+  train_loss=0.2217  val_mIoU=0.5433
+  -> saved best checkpoint (mIoU=0.5433)
+Epoch 7/50
+  train_loss=0.2084  val_mIoU=0.5421
+Epoch 8/50
+  train_loss=0.1922  val_mIoU=0.5410
+Epoch 9/50
+  train_loss=0.1828  val_mIoU=0.5671
+  -> saved best checkpoint (mIoU=0.5671)
+Epoch 10/50
+  train_loss=0.1740  val_mIoU=0.5745
+  -> saved best checkpoint (mIoU=0.5745)
+Epoch 11/50
+  train_loss=0.1600  val_mIoU=0.5623
+Epoch 12/50
+  train_loss=0.1526  val_mIoU=0.5466
+Epoch 13/50
+  train_loss=0.1490  val_mIoU=0.5475
+Epoch 14/50
+  train_loss=0.1416  val_mIoU=0.5735
+Epoch 15/50
+  train_loss=0.1359  val_mIoU=0.5672
+Epoch 16/50
+  train_loss=0.1264  val_mIoU=0.5677
+Epoch 17/50
+  train_loss=0.1226  val_mIoU=0.5759
+  -> saved best checkpoint (mIoU=0.5759)
+Epoch 18/50
+  train_loss=0.1174  val_mIoU=0.5712
+Epoch 19/50
+  train_loss=0.1145  val_mIoU=0.5727
+Epoch 20/50
+  train_loss=0.1082  val_mIoU=0.5643
+Epoch 21/50
+  train_loss=0.1017  val_mIoU=0.5738
+Epoch 22/50
+  train_loss=0.1032  val_mIoU=0.5642
+Epoch 23/50
+  train_loss=0.1012  val_mIoU=0.5658
+Epoch 24/50
+  train_loss=0.0997  val_mIoU=0.5660
+Epoch 25/50
+  train_loss=0.0984  val_mIoU=0.5630
+Epoch 26/50
+  train_loss=0.0918  val_mIoU=0.5755
+Epoch 27/50
+  train_loss=0.0901  val_mIoU=0.5751
+Epoch 28/50
+  train_loss=0.0908  val_mIoU=0.5824
+  -> saved best checkpoint (mIoU=0.5824)
+Epoch 29/50
+  train_loss=0.0896  val_mIoU=0.5743
+Epoch 30/50
+  train_loss=0.0865  val_mIoU=0.5784
+Epoch 31/50
+  train_loss=0.0820  val_mIoU=0.5817
+Epoch 32/50
+  train_loss=0.0790  val_mIoU=0.5722
+Epoch 33/50
+  train_loss=0.0789  val_mIoU=0.5676
+Epoch 34/50
+  train_loss=0.0776  val_mIoU=0.5780
+Epoch 35/50
+  train_loss=0.0767  val_mIoU=0.5722
+Epoch 36/50
+  train_loss=0.0754  val_mIoU=0.5799
+Epoch 37/50
+  train_loss=0.0722  val_mIoU=0.5837
+  -> saved best checkpoint (mIoU=0.5837)
+Epoch 38/50
+  train_loss=0.0712  val_mIoU=0.5796
+Epoch 39/50
+  train_loss=0.0713  val_mIoU=0.5826
+Epoch 40/50
+  train_loss=0.0707  val_mIoU=0.5831
+Epoch 41/50
+  train_loss=0.0679  val_mIoU=0.5901
+  -> saved best checkpoint (mIoU=0.5901)
+Epoch 42/50
+  train_loss=0.0641  val_mIoU=0.5833
+Epoch 43/50
+  train_loss=0.0629  val_mIoU=0.5801
+Epoch 44/50
+  train_loss=0.0625  val_mIoU=0.5811
+Epoch 45/50
+  train_loss=0.0637  val_mIoU=0.5863
+Epoch 46/50
+  train_loss=0.0620  val_mIoU=0.5783
+Epoch 47/50
+  train_loss=0.0629  val_mIoU=0.5789
+Epoch 48/50
+  train_loss=0.0607  val_mIoU=0.5820
+Epoch 49/50
+  train_loss=0.0592  val_mIoU=0.5820
+Epoch 50/50
+  train_loss=0.0632  val_mIoU=0.5766
+Training complete. Best val mIoU: 0.5901
+Artifacts in: ./results/v2/runs/slic_s0
+=== [eval]  slic_s0 ===
+/home/ubuntu/partial-ce-segmentation/evaluate.py:91: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  "timestamp":        datetime.utcnow().isoformat(),
+/home/ubuntu/partial-ce-segmentation/evaluate.py:124: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  "timestamp":          datetime.utcnow().isoformat(),
+
+Test results  (run: slic_s0)
+----------------------------------------
+  Impervious surfaces      0.7920
+  Building                 0.7900
+  Low vegetation           0.5960
+  Tree                     0.5764
+  Car                      0.7068
+  Clutter/background       0.1577
+----------------------------------------
+  mIoU                     0.6031
+
+Saved test_metrics.json → results/v2/runs/slic_s0
+Upserted row  → ./results/v2/summary.csv
+=== [train] interior_s0 :: --points_per_class 10 --focal_gamma 2.0 --sampling interior --seed 0 --point_seed 0 ===
+Using device: cuda
+Run directory: ./results/v2/runs/interior_s0
+seed=0  point_seed=0  fixed_points=True  sampling=interior  use_slic=False
+Epoch 1/50
+  train_loss=0.8597  val_mIoU=0.2359
+  -> saved best checkpoint (mIoU=0.2359)
+Epoch 2/50
+  train_loss=0.4519  val_mIoU=0.3796
+  -> saved best checkpoint (mIoU=0.3796)
+Epoch 3/50
+  train_loss=0.3229  val_mIoU=0.4419
+  -> saved best checkpoint (mIoU=0.4419)
+Epoch 4/50
+  train_loss=0.2568  val_mIoU=0.4615
+  -> saved best checkpoint (mIoU=0.4615)
+Epoch 5/50
+  train_loss=0.2178  val_mIoU=0.4645
+  -> saved best checkpoint (mIoU=0.4645)
+Epoch 6/50
+  train_loss=0.1897  val_mIoU=0.4674
+  -> saved best checkpoint (mIoU=0.4674)
+Epoch 7/50
+  train_loss=0.1651  val_mIoU=0.4831
+  -> saved best checkpoint (mIoU=0.4831)
+Epoch 8/50
+  train_loss=0.1473  val_mIoU=0.4632
+Epoch 9/50
+  train_loss=0.1341  val_mIoU=0.4858
+  -> saved best checkpoint (mIoU=0.4858)
+Epoch 10/50
+  train_loss=0.1172  val_mIoU=0.4958
+  -> saved best checkpoint (mIoU=0.4958)
+Epoch 11/50
+  train_loss=0.1045  val_mIoU=0.4844
+Epoch 12/50
+  train_loss=0.1008  val_mIoU=0.4977
+  -> saved best checkpoint (mIoU=0.4977)
+Epoch 13/50
+  train_loss=0.0926  val_mIoU=0.4863
+Epoch 14/50
+  train_loss=0.0859  val_mIoU=0.4892
+Epoch 15/50
+  train_loss=0.0798  val_mIoU=0.4814
+Epoch 16/50
+  train_loss=0.0687  val_mIoU=0.5021
+  -> saved best checkpoint (mIoU=0.5021)
+Epoch 17/50
+  train_loss=0.0682  val_mIoU=0.5116
+  -> saved best checkpoint (mIoU=0.5116)
+Epoch 18/50
+  train_loss=0.0618  val_mIoU=0.5123
+  -> saved best checkpoint (mIoU=0.5123)
+Epoch 19/50
+  train_loss=0.0589  val_mIoU=0.5200
+  -> saved best checkpoint (mIoU=0.5200)
+Epoch 20/50
+  train_loss=0.0548  val_mIoU=0.5160
+Epoch 21/50
+  train_loss=0.0531  val_mIoU=0.5031
+Epoch 22/50
+  train_loss=0.0511  val_mIoU=0.5115
+Epoch 23/50
+  train_loss=0.0470  val_mIoU=0.5206
+  -> saved best checkpoint (mIoU=0.5206)
+Epoch 24/50
+  train_loss=0.0470  val_mIoU=0.5048
+Epoch 25/50
+  train_loss=0.0424  val_mIoU=0.5274
+  -> saved best checkpoint (mIoU=0.5274)
+Epoch 26/50
+  train_loss=0.0368  val_mIoU=0.5147
+Epoch 27/50
+  train_loss=0.0381  val_mIoU=0.5238
+Epoch 28/50
+  train_loss=0.0354  val_mIoU=0.5177
+Epoch 29/50
+  train_loss=0.0345  val_mIoU=0.5186
+Epoch 30/50
+  train_loss=0.0360  val_mIoU=0.5188
+Epoch 31/50
+  train_loss=0.0383  val_mIoU=0.5166
+Epoch 32/50
+  train_loss=0.0374  val_mIoU=0.5114
+Epoch 33/50
+  train_loss=0.0331  val_mIoU=0.5082
+Epoch 34/50
+  train_loss=0.0295  val_mIoU=0.5164
+Epoch 35/50
+  train_loss=0.0278  val_mIoU=0.5186
+Epoch 36/50
+  train_loss=0.0258  val_mIoU=0.5187
+Epoch 37/50
+  train_loss=0.0215  val_mIoU=0.5285
+  -> saved best checkpoint (mIoU=0.5285)
+Epoch 38/50
+  train_loss=0.0252  val_mIoU=0.5130
+Epoch 39/50
+  train_loss=0.0232  val_mIoU=0.5280
+Epoch 40/50
+  train_loss=0.0216  val_mIoU=0.5119
+Epoch 41/50
+  train_loss=0.0205  val_mIoU=0.5248
+Epoch 42/50
+  train_loss=0.0176  val_mIoU=0.5345
+  -> saved best checkpoint (mIoU=0.5345)
+Epoch 43/50
+  train_loss=0.0187  val_mIoU=0.5150
+Epoch 44/50
+  train_loss=0.0220  val_mIoU=0.5351
+  -> saved best checkpoint (mIoU=0.5351)
+Epoch 45/50
+  train_loss=0.0203  val_mIoU=0.5130
+Epoch 46/50
+  train_loss=0.0179  val_mIoU=0.5267
+Epoch 47/50
+  train_loss=0.0186  val_mIoU=0.5248
+Epoch 48/50
+  train_loss=0.0163  val_mIoU=0.5247
+Epoch 49/50
+  train_loss=0.0149  val_mIoU=0.5167
+Epoch 50/50
+  train_loss=0.0162  val_mIoU=0.5276
+Training complete. Best val mIoU: 0.5351
+Artifacts in: ./results/v2/runs/interior_s0
+=== [eval]  interior_s0 ===
+/home/ubuntu/partial-ce-segmentation/evaluate.py:91: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  "timestamp":        datetime.utcnow().isoformat(),
+/home/ubuntu/partial-ce-segmentation/evaluate.py:124: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  "timestamp":          datetime.utcnow().isoformat(),
+
+Test results  (run: interior_s0)
+----------------------------------------
+  Impervious surfaces      0.7171
+  Building                 0.7226
+  Low vegetation           0.5333
+  Tree                     0.5263
+  Car                      0.5911
+  Clutter/background       0.1014
+----------------------------------------
+  mIoU                     0.5320
+
+Saved test_metrics.json → results/v2/runs/interior_s0
+Upserted row  → ./results/v2/summary.csv
+=== [train] boundary_s0 :: --points_per_class 10 --focal_gamma 2.0 --sampling boundary --seed 0 --point_seed 0 ===
+Using device: cuda
+Run directory: ./results/v2/runs/boundary_s0
+seed=0  point_seed=0  fixed_points=True  sampling=boundary  use_slic=False
+Epoch 1/50
+  train_loss=0.9804  val_mIoU=0.1820
+  -> saved best checkpoint (mIoU=0.1820)
+Epoch 2/50
+  train_loss=0.6589  val_mIoU=0.3911
+  -> saved best checkpoint (mIoU=0.3911)
+Epoch 3/50
+  train_loss=0.5240  val_mIoU=0.4486
+  -> saved best checkpoint (mIoU=0.4486)
+Epoch 4/50
+  train_loss=0.4445  val_mIoU=0.4685
+  -> saved best checkpoint (mIoU=0.4685)
+Epoch 5/50
+  train_loss=0.3941  val_mIoU=0.4696
+  -> saved best checkpoint (mIoU=0.4696)
+Epoch 6/50
+  train_loss=0.3584  val_mIoU=0.4718
+  -> saved best checkpoint (mIoU=0.4718)
+Epoch 7/50
+  train_loss=0.3346  val_mIoU=0.4941
+  -> saved best checkpoint (mIoU=0.4941)
+Epoch 8/50
+  train_loss=0.3021  val_mIoU=0.4715
+Epoch 9/50
+  train_loss=0.2816  val_mIoU=0.4899
+Epoch 10/50
+  train_loss=0.2666  val_mIoU=0.5026
+  -> saved best checkpoint (mIoU=0.5026)
+Epoch 11/50
+  train_loss=0.2453  val_mIoU=0.4872
+Epoch 12/50
+  train_loss=0.2325  val_mIoU=0.4869
+Epoch 13/50
+  train_loss=0.2294  val_mIoU=0.4898
+Epoch 14/50
+  train_loss=0.2102  val_mIoU=0.5140
+  -> saved best checkpoint (mIoU=0.5140)
+Epoch 15/50
+  train_loss=0.2046  val_mIoU=0.5083
+Epoch 16/50
+  train_loss=0.1892  val_mIoU=0.5114
+Epoch 17/50
+  train_loss=0.1830  val_mIoU=0.5235
+  -> saved best checkpoint (mIoU=0.5235)
+Epoch 18/50
+  train_loss=0.1745  val_mIoU=0.5044
+Epoch 19/50
+  train_loss=0.1596  val_mIoU=0.5187
+Epoch 20/50
+  train_loss=0.1559  val_mIoU=0.4939
+Epoch 21/50
+  train_loss=0.1518  val_mIoU=0.5096
+Epoch 22/50
+  train_loss=0.1544  val_mIoU=0.5143
+Epoch 23/50
+  train_loss=0.1450  val_mIoU=0.5231
+Epoch 24/50
+  train_loss=0.1382  val_mIoU=0.5094
+Epoch 25/50
+  train_loss=0.1423  val_mIoU=0.5062
+Epoch 26/50
+  train_loss=0.1309  val_mIoU=0.5207
+Epoch 27/50
+  train_loss=0.1246  val_mIoU=0.5126
+Epoch 28/50
+  train_loss=0.1208  val_mIoU=0.5145
+Epoch 29/50
+  train_loss=0.1159  val_mIoU=0.5182
+Epoch 30/50
+  train_loss=0.1119  val_mIoU=0.5239
+  -> saved best checkpoint (mIoU=0.5239)
+Epoch 31/50
+  train_loss=0.1113  val_mIoU=0.5231
+Epoch 32/50
+  train_loss=0.1079  val_mIoU=0.5270
+  -> saved best checkpoint (mIoU=0.5270)
+Epoch 33/50
+  train_loss=0.1053  val_mIoU=0.5236
+Epoch 34/50
+  train_loss=0.1047  val_mIoU=0.5253
+Epoch 35/50
+  train_loss=0.1001  val_mIoU=0.5153
+Epoch 36/50
+  train_loss=0.0988  val_mIoU=0.5106
+Epoch 37/50
+  train_loss=0.0986  val_mIoU=0.5372
+  -> saved best checkpoint (mIoU=0.5372)
+Epoch 38/50
+  train_loss=0.0979  val_mIoU=0.5211
+Epoch 39/50
+  train_loss=0.0917  val_mIoU=0.5364
+Epoch 40/50
+  train_loss=0.0868  val_mIoU=0.5195
+Epoch 41/50
+  train_loss=0.0826  val_mIoU=0.5243
+Epoch 42/50
+  train_loss=0.0796  val_mIoU=0.5246
+Epoch 43/50
+  train_loss=0.0787  val_mIoU=0.5266
+Epoch 44/50
+  train_loss=0.0773  val_mIoU=0.5283
+Epoch 45/50
+  train_loss=0.0763  val_mIoU=0.5228
+Epoch 46/50
+  train_loss=0.0803  val_mIoU=0.5330
+Epoch 47/50
+  train_loss=0.0774  val_mIoU=0.5189
+Epoch 48/50
+  train_loss=0.0716  val_mIoU=0.5192
+Epoch 49/50
+  train_loss=0.0706  val_mIoU=0.5098
+Epoch 50/50
+  train_loss=0.0691  val_mIoU=0.5344
+Training complete. Best val mIoU: 0.5372
+Artifacts in: ./results/v2/runs/boundary_s0
+=== [eval]  boundary_s0 ===
+/home/ubuntu/partial-ce-segmentation/evaluate.py:91: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  "timestamp":        datetime.utcnow().isoformat(),
+/home/ubuntu/partial-ce-segmentation/evaluate.py:124: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  "timestamp":          datetime.utcnow().isoformat(),
+
+Test results  (run: boundary_s0)
+----------------------------------------
+  Impervious surfaces      0.7472
+  Building                 0.7552
+  Low vegetation           0.5346
+  Tree                     0.5188
+  Car                      0.6533
+  Clutter/background       0.1112
+----------------------------------------
+  mIoU                     0.5534
+
+Saved test_metrics.json → results/v2/runs/boundary_s0
+Upserted row  → ./results/v2/summary.csv
+=== all v2 runs complete ===
