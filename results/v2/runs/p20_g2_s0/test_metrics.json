@@ -1,0 +1,18 @@
+{
+  "run_name": "p20_g2_s0",
+  "test_miou": 0.56942,
+  "best_val_miou": 0.570376,
+  "per_class_iou": {
+    "impervious": 0.753895,
+    "building": 0.767432,
+    "low_vegetation": 0.574112,
+    "tree": 0.558471,
+    "car": 0.637349,
+    "clutter": 0.125261
+  },
+  "points_per_class": 20,
+  "focal_gamma": 2.0,
+  "epochs_trained": 50,
+  "batch_size": 64,
+  "timestamp": "2026-09-29T16:15:38.672784"
+}

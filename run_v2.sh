@@ -5,6 +5,7 @@
 # Idempotent: a run with an existing test_metrics.json is skipped, so this is
 # safe to re-invoke after an interruption.
 set -euo pipefail
+export TQDM_DISABLE=1
 cd "$(dirname "$0")"
 
 CFG=configs/v2.yaml

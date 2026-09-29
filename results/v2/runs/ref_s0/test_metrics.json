@@ -1,0 +1,18 @@
+{
+  "run_name": "ref_s0",
+  "test_miou": 0.560337,
+  "best_val_miou": 0.546786,
+  "per_class_iou": {
+    "impervious": 0.757053,
+    "building": 0.745265,
+    "low_vegetation": 0.565028,
+    "tree": 0.528824,
+    "car": 0.646436,
+    "clutter": 0.119413
+  },
+  "points_per_class": 10,
+  "focal_gamma": 2.0,
+  "epochs_trained": 50,
+  "batch_size": 64,
+  "timestamp": "2026-09-29T14:45:33.402478"
+}
