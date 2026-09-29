@@ -339,12 +339,72 @@ def fig4_purity_vs_miou():
     print("wrote", out)
 
 
+# ============================================================================= fig 5
+def fig5_supervision_gap():
+    """Each condition's test mIoU as a fraction of the full-supervision ceiling."""
+    df = load_summary()
+    ceiling = float(df[df.run_name == "full_sup_s0"]["test_miou"].iloc[0])
+    ref = cond_stats(df, df.run_name.str.startswith("ref_s"))
+
+    # Ordered worst → best so the bars climb toward the ceiling line.
+    rows = [
+        ("1 point per class",   cond_stats(df, df.run_name == "p1_g2_s0"),  False),
+        ("5 points per class",  cond_stats(df, df.run_name == "p5_g2_s0"),  False),
+        ("10 points per class", ref,                                        False),
+        ("20 points per class", cond_stats(df, df.run_name == "p20_g2_s0"), False),
+        ("50 points per class", cond_stats(df, df.run_name == "p50_g2_s0"), False),
+        ("SLIC (10 points)",    cond_stats(df, df.run_name == "slic_s0"),   True),
+    ]
+    labels = [r[0] for r in rows]
+    means  = [r[1]["mean"] for r in rows]
+    colours = [SLIC_CLR if r[2] else GREY for r in rows]
+    y = np.arange(len(rows))
+
+    fig, ax = plt.subplots(figsize=_figsize(PX, 620))
+    ax.barh(y, means, color=colours, height=0.62, zorder=2)
+
+    # min–max whisker for the reference (multi-seed) bar.
+    for yi, r in zip(y, rows):
+        st = r[1]
+        if st["n"] > 1:
+            ax.plot([st["lo"], st["hi"]], [yi, yi], color="#333333", lw=1.6,
+                    zorder=3, solid_capstyle="round")
+
+    # Ceiling line + label (placed to the left of the line so it never clips).
+    ax.axvline(ceiling, color="#333333", ls="--", lw=1.4, zorder=4)
+    ax.text(ceiling, len(rows) - 0.28, f"full supervision  {ceiling:.3f}  ",
+            va="center", ha="right", fontsize=9.5, color="#333333")
+
+    # Value + % of ceiling at the end of each bar.
+    for yi, m, r in zip(y, means, rows):
+        pct = 100.0 * m / ceiling
+        ax.annotate(f"{m:.3f}  ({pct:.0f}%)", (m, yi), textcoords="offset points",
+                    xytext=(6, 0), va="center", ha="left", fontsize=9,
+                    color=SLIC_CLR if r[2] else "#333333",
+                    fontweight="bold" if r[2] else "normal")
+
+    ax.set_yticks(y)
+    ax.set_yticklabels(labels, fontsize=10)
+    ax.set_xlabel("Test mIoU")
+    ax.set_xlim(0, ceiling * 1.18)
+    ax.set_ylim(-0.6, len(rows) + 0.1)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.grid(axis="x", color="#eeeeee", lw=0.8, zorder=0)
+    fig.subplots_adjust(left=0.20, right=0.975, top=0.97, bottom=0.15)
+    out = os.path.join(OUT_DIR, "fig-5.png")
+    fig.savefig(out, dpi=DPI * 2)
+    plt.close(fig)
+    print("wrote", out)
+
+
 if __name__ == "__main__":
     import sys
-    which = sys.argv[1:] or ["1", "2", "3", "4"]
+    which = sys.argv[1:] or ["1", "2", "3", "4", "5"]
     if "1" in which: fig1_point_labels()
     if "3" in which: fig3_slic_purity()
     if "4" in which: fig4_purity_vs_miou()
+    if "5" in which: fig5_supervision_gap()
     if "2" in which:
         fig2_conditions(header=False)
         fig2_conditions(header=True)
