@@ -99,7 +99,9 @@ def save_test_metrics(run_dir: str, run_name: str, config: dict,
         "best_val_miou", "test_miou",
         "iou_impervious", "iou_building", "iou_low_vegetation",
         "iou_tree", "iou_car", "iou_clutter",
-        "epochs_trained", "batch_size", "timestamp",
+        "epochs_trained", "batch_size",
+        "seed", "point_seed", "fixed_points", "sampling",
+        "timestamp",
     ]
     row = {
         "run_name":           run_name,
@@ -115,6 +117,10 @@ def save_test_metrics(run_dir: str, run_name: str, config: dict,
         "iou_clutter":        round(safe_iou[5], 6),
         "epochs_trained":     config["epochs"],
         "batch_size":         config["batch_size"],
+        "seed":               config.get("seed", 0),
+        "point_seed":         config.get("point_seed", 0),
+        "fixed_points":       config.get("fixed_points", True),
+        "sampling":           config.get("sampling", "uniform"),
         "timestamp":          datetime.utcnow().isoformat(),
     }
     existing = []

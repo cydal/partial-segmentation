@@ -1,7 +1,9 @@
 import argparse
 import csv
 import os
+import random
 
+import numpy as np
 import torch
 import yaml
 from torch.utils.data import DataLoader
@@ -18,6 +20,21 @@ def load_config(path: str) -> dict:
         return yaml.safe_load(f)
 
 
+def set_seed(seed: int):
+    """Seed torch, numpy and random for reproducible training runs."""
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+
+
+def seed_worker(worker_id):
+    """Give each DataLoader worker a deterministic (but distinct) seed."""
+    worker_seed = torch.initial_seed() % 2 ** 32
+    np.random.seed(worker_seed)
+    random.seed(worker_seed)
+
+
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--config",           default="configs/base.yaml")
@@ -29,6 +46,10 @@ def parse_args():
     parser.add_argument("--slic_n_segments",  type=int,   default=None)
     parser.add_argument("--sampling",         type=str,   default=None,
                         choices=["uniform", "boundary", "interior"])
+    parser.add_argument("--seed",             type=int,   default=None)
+    parser.add_argument("--point_seed",       type=int,   default=None)
+    parser.add_argument("--fixed_points",     dest="fixed_points", action="store_true",  default=None)
+    parser.add_argument("--no_fixed_points",  dest="fixed_points", action="store_false")
     return parser.parse_args()
 
 
@@ -103,6 +124,21 @@ def main():
         cfg["slic_n_segments"] = args.slic_n_segments
     if args.sampling is not None:
         cfg["sampling"] = args.sampling
+    if args.seed is not None:
+        cfg["seed"] = args.seed
+    if args.point_seed is not None:
+        cfg["point_seed"] = args.point_seed
+    if args.fixed_points is not None:
+        cfg["fixed_points"] = args.fixed_points
+
+    # Defaults for keys that may be absent in older configs
+    cfg.setdefault("seed", 0)
+    cfg.setdefault("point_seed", 0)
+    cfg.setdefault("fixed_points", True)
+
+    seed = cfg["seed"]
+    set_seed(seed)
+    torch.backends.cudnn.benchmark = True   # autotune conv kernels (fixed input size)
 
     os.makedirs(cfg["results_dir"], exist_ok=True)
     run_dir = setup_run_dir(args.run_name, cfg)
@@ -110,11 +146,15 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
     print(f"Run directory: {run_dir}")
+    print(f"seed={seed}  point_seed={cfg['point_seed']}  fixed_points={cfg['fixed_points']}  "
+          f"sampling={cfg.get('sampling','uniform')}  use_slic={cfg.get('use_slic', False)}")
 
     ds_kwargs = dict(
         use_slic=cfg.get("use_slic", False),
         slic_n_segments=cfg.get("slic_n_segments", 200),
         sampling=cfg.get("sampling", "uniform"),
+        fixed_points=cfg["fixed_points"],
+        point_seed=cfg["point_seed"],
     )
     train_ds = PotsdamPointDataset(cfg["data_root"], "train",
                                    points_per_class=cfg["points_per_class"],
@@ -123,10 +163,14 @@ def main():
                                    points_per_class=cfg["points_per_class"],
                                    augment=False, **ds_kwargs)
 
+    g = torch.Generator()
+    g.manual_seed(seed)
+    loader_kwargs = dict(num_workers=cfg["num_workers"], pin_memory=True,
+                         worker_init_fn=seed_worker, persistent_workers=cfg["num_workers"] > 0)
     train_loader = DataLoader(train_ds, batch_size=cfg["batch_size"],
-                              shuffle=True,  num_workers=cfg["num_workers"], pin_memory=True)
+                              shuffle=True, generator=g, **loader_kwargs)
     val_loader   = DataLoader(val_ds,   batch_size=cfg["batch_size"],
-                              shuffle=False, num_workers=cfg["num_workers"], pin_memory=True)
+                              shuffle=False, **loader_kwargs)
 
     model = build_model(cfg["num_classes"], cfg["backbone"], cfg["pretrained"]).to(device)
     criterion = PartialFocalCELoss(gamma=cfg["focal_gamma"], num_classes=cfg["num_classes"])

@@ -16,6 +16,11 @@ points_per_class: 10
 use_slic: false
 slic_n_segments: 200
 sampling: uniform
+fixed_points: true             # sample points once per image (seeded); false = legacy re-draw
+point_seed: 0                  # seed for point placement, keyed with image index
+
+# Reproducibility
+seed: 0                        # seeds torch / numpy / random / dataloader workers
 
 # Training
 epochs: 50
