@@ -120,6 +120,31 @@ judge whether any single-seed condition is meaningfully different.
 | Point placement | Interior | 0.5320 | highest label purity, **lowest** mIoU |
 | | Uniform (reference) | 0.5545 | |
 | | Boundary | 0.5534 | |
+| Upper bound | Full supervision | **0.6170** | dense masks, same model/schedule (`full_sup_s0`) |
+
+### Full-supervision upper bound
+
+Run `full_sup_s0`: identical setup (DeepLabV3+/ResNet-50, γ = 2, Adam, 50 epochs,
+seed 0) but every pixel labelled — pfCE reduces to ordinary focal CE. Test mIoU
+**0.6170**. This is the ceiling the sparse-point conditions are working toward, so
+each condition can be read as a fraction of full supervision:
+
+| Condition | Test mIoU | % of full-sup ceiling |
+|---|---|---|
+| Full supervision | 0.6170 | 100.0% |
+| SLIC (10 pts) | 0.6031 | 97.8% |
+| 50 points/class | 0.5719 | 92.7% |
+| 20 points/class | 0.5694 | 92.3% |
+| 10 points/class (reference) | 0.5545 | 89.9% |
+| 5 points/class | 0.5510 | 89.3% |
+| 1 point/class | 0.4912 | 79.6% |
+
+Takeaways: **10 clicks per class recovers ~90% of dense supervision**, and **SLIC
+label spreading closes almost the entire remaining gap (97.8%)** — the sparse-to-
+dense gap is smaller than the annotation-effort difference would suggest. The
+`full_sup_s0` summary row carries `points_per_class=10`/`sampling=uniform` from the
+config, but the operative setting is `full_supervision=True` (recorded in its
+`config.yaml`); the point-sampling fields are inert in that run.
 
 ### v1 vs v2 per condition
 
