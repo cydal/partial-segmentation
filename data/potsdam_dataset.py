@@ -173,7 +173,8 @@ class PotsdamPointDataset(Dataset):
     def __init__(self, data_root: str, split: str, points_per_class: int = 10,
                  augment: bool = False, use_slic: bool = False, slic_n_segments: int = 200,
                  sampling: str = "uniform", fixed_points: bool = True,
-                 point_seed: int = 0, slic_cache_dir: str = None):
+                 point_seed: int = 0, slic_cache_dir: str = None,
+                 full_supervision: bool = False):
         assert split in SPLIT_RANGES, f"split must be one of {list(SPLIT_RANGES)}"
         self.data_root = data_root
         self.split = split
@@ -184,6 +185,10 @@ class PotsdamPointDataset(Dataset):
         self.sampling = sampling
         self.fixed_points = fixed_points
         self.point_seed = point_seed
+        # Full-supervision upper bound: every pixel is labelled, so pfCE reduces to
+        # ordinary (focal) cross-entropy over the whole image. Point sampling and
+        # SLIC are bypassed.
+        self.full_supervision = full_supervision
 
         start, end = SPLIT_RANGES[split]
         self.indices = list(range(start, end))
@@ -239,7 +244,15 @@ class PotsdamPointDataset(Dataset):
         label_rgb = np.array(Image.open(label_path).convert("RGB"), dtype=np.uint8)
         label = rgb_to_label(label_rgb)
 
-        if self.fixed_points:
+        if self.full_supervision:
+            # Every pixel labelled → point_mask is all ones. Augment label alongside
+            # the image; the mask stays all ones regardless of the transform.
+            if self.aug is not None:
+                augmented = self.aug(image=image, mask=label)
+                image = augmented["image"]
+                label = augmented["mask"]
+            point_mask = np.ones(label.shape, dtype=np.float32)
+        elif self.fixed_points:
             # NEW: sample points once, on the un-augmented label, with a generator
             # seeded by (point_seed, image index). SLIC is expanded here too, on the
             # un-augmented image. The masks are then transformed together with the
