@@ -39,6 +39,16 @@ match the article.
   procedure, not a row in those CSVs. The aggregate purity trend in fig-4 is what
   those CSVs quantify.
 
+## fig-5: sparse vs full supervision
+
+- All mIoU read live from `results/v2/summary.csv`. Ceiling = `full_sup_s0`
+  test mIoU **0.617**. Percentages are `mean / ceiling`: 1 pt 80%, 5 pt 89%,
+  10 pt (reference mean) 90%, 20 pt 92%, 50 pt 93%, SLIC 98%. Re-derived from the
+  CSV — **match**.
+- The `full_sup_s0` summary row shows `points_per_class=10` / `sampling=uniform`
+  (inert config leftovers); the operative flag is `full_supervision=True`, recorded
+  in its `config.yaml`. Not a mismatch, just a labelling note.
+
 ## Summary
 
 No CSV-vs-figure mismatches found.

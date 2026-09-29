@@ -50,6 +50,8 @@ def parse_args():
     parser.add_argument("--point_seed",       type=int,   default=None)
     parser.add_argument("--fixed_points",     dest="fixed_points", action="store_true",  default=None)
     parser.add_argument("--no_fixed_points",  dest="fixed_points", action="store_false")
+    parser.add_argument("--full_supervision", action="store_true", default=None,
+                        help="dense-mask upper bound: label every pixel (pfCE → CE)")
     return parser.parse_args()
 
 
@@ -130,11 +132,14 @@ def main():
         cfg["point_seed"] = args.point_seed
     if args.fixed_points is not None:
         cfg["fixed_points"] = args.fixed_points
+    if args.full_supervision:
+        cfg["full_supervision"] = True
 
     # Defaults for keys that may be absent in older configs
     cfg.setdefault("seed", 0)
     cfg.setdefault("point_seed", 0)
     cfg.setdefault("fixed_points", True)
+    cfg.setdefault("full_supervision", False)
 
     seed = cfg["seed"]
     set_seed(seed)
@@ -147,6 +152,7 @@ def main():
     print(f"Using device: {device}")
     print(f"Run directory: {run_dir}")
     print(f"seed={seed}  point_seed={cfg['point_seed']}  fixed_points={cfg['fixed_points']}  "
+          f"full_supervision={cfg['full_supervision']}  "
           f"sampling={cfg.get('sampling','uniform')}  use_slic={cfg.get('use_slic', False)}")
 
     ds_kwargs = dict(
@@ -155,6 +161,7 @@ def main():
         sampling=cfg.get("sampling", "uniform"),
         fixed_points=cfg["fixed_points"],
         point_seed=cfg["point_seed"],
+        full_supervision=cfg["full_supervision"],
     )
     train_ds = PotsdamPointDataset(cfg["data_root"], "train",
                                    points_per_class=cfg["points_per_class"],
