@@ -223,7 +223,9 @@ class PotsdamPointDataset(Dataset):
             except Exception:
                 pass  # corrupt cache → recompute
         segments = compute_slic_segments(image, self.slic_n_segments)
-        tmp = cache_path + f".tmp{os.getpid()}"
+        # np.save appends ".npy" if absent, so give the temp path that suffix and
+        # replace using the exact name np.save actually wrote (atomic, worker-safe).
+        tmp = cache_path + f".tmp{os.getpid()}.npy"
         np.save(tmp, segments)
         os.replace(tmp, cache_path)
         return segments
