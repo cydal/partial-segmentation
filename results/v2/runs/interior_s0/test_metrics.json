@@ -1,0 +1,18 @@
+{
+  "run_name": "interior_s0",
+  "test_miou": 0.531956,
+  "best_val_miou": 0.535144,
+  "per_class_iou": {
+    "impervious": 0.717073,
+    "building": 0.722632,
+    "low_vegetation": 0.533272,
+    "tree": 0.526306,
+    "car": 0.591058,
+    "clutter": 0.101392
+  },
+  "points_per_class": 10,
+  "focal_gamma": 2.0,
+  "epochs_trained": 50,
+  "batch_size": 64,
+  "timestamp": "2026-09-29T18:19:43.508254"
+}

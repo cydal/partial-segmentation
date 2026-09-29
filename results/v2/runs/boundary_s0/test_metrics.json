@@ -1,0 +1,18 @@
+{
+  "run_name": "boundary_s0",
+  "test_miou": 0.553368,
+  "best_val_miou": 0.53724,
+  "per_class_iou": {
+    "impervious": 0.747218,
+    "building": 0.755174,
+    "low_vegetation": 0.53463,
+    "tree": 0.518756,
+    "car": 0.653252,
+    "clutter": 0.11118
+  },
+  "points_per_class": 10,
+  "focal_gamma": 2.0,
+  "epochs_trained": 50,
+  "batch_size": 64,
+  "timestamp": "2026-09-29T18:38:34.664439"
+}

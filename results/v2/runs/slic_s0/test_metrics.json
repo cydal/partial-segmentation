@@ -1,0 +1,18 @@
+{
+  "run_name": "slic_s0",
+  "test_miou": 0.603144,
+  "best_val_miou": 0.590108,
+  "per_class_iou": {
+    "impervious": 0.792012,
+    "building": 0.789969,
+    "low_vegetation": 0.595999,
+    "tree": 0.576353,
+    "car": 0.706812,
+    "clutter": 0.157722
+  },
+  "points_per_class": 10,
+  "focal_gamma": 2.0,
+  "epochs_trained": 50,
+  "batch_size": 64,
+  "timestamp": "2026-09-29T18:00:40.237700"
+}

@@ -1,0 +1,18 @@
+{
+  "run_name": "g0_s0",
+  "test_miou": 0.560986,
+  "best_val_miou": 0.555371,
+  "per_class_iou": {
+    "impervious": 0.752654,
+    "building": 0.752533,
+    "low_vegetation": 0.553519,
+    "tree": 0.559444,
+    "car": 0.625811,
+    "clutter": 0.121953
+  },
+  "points_per_class": 10,
+  "focal_gamma": 0.0,
+  "epochs_trained": 50,
+  "batch_size": 64,
+  "timestamp": "2026-09-29T16:51:57.541800"
+}
